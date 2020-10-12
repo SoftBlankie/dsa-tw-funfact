@@ -1,2 +1,2 @@
-# dsa-tw-funfact
+# dsa-tw
 Tweet DSA posts to twitter account
