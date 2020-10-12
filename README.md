@@ -1,2 +1,2 @@
 # dsa-tw-funfact
-Tweet DSA's fun facts every friday
+Tweet DSA posts to twitter account
