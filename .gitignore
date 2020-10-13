@@ -1,2 +1,5 @@
 .env
+__pycache__
+gd_credentials.json
+token.pickle
 venv
