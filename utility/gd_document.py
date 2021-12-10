@@ -1,3 +1,4 @@
+import datetime
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -38,27 +39,59 @@ document = gd.documents().get(documentId=DOCUMENT_ID).execute()
 document_content = document.get('body').get('content')
 document_text = read_structural_elements(document_content)
 
-posts = {}
 # populate posts
-cur_date = cur_text = cur_tags = ''
-blocks = document_text.split('\n\n')
-for block in blocks:
-    if not block:
-        continue
+'''
+Format : 
+    date
+    text
 
-    tokens = block.split('\n', 1)
-    if len(tokens) == 1 and 'Tags' not in tokens[0]:
-        continue
+    tags
+'''
+def getPosts():
+    posts = {}
+    cur_date = cur_text = cur_tags = ''
 
-    if 'Tags' not in tokens[0]:
-        # it is a date
-        cur_date = tokens[0]
-        cur_text = tokens[1]
-    if 'Tags' in tokens[0]:
-        # it is a tag
-        cur_tags = tokens[0][6:]
-        posts[cur_date] = [cur_text, cur_tags]
-#print(posts)
+    blocks = document_text.split('\n\n')
+    for block in blocks:
+        if not block:
+            continue
 
-#print('The title of the document is: {}'.format(document.get('title')))
-#print('Document content: {}'.format(document_text))
+        tokens = block.split('\n', 1)
+        if len(tokens) == 1:
+            if 'Tags' not in tokens[0]:
+                continue
+
+        if 'Tags' not in tokens[0]:
+            # it is a date
+            cur_date = tokens[0]
+            cur_text = tokens[1]
+        if 'Tags' in tokens[0]:
+            # it is a tag
+            cur_tags = tokens[0][6:]
+            posts[cur_date] = [cur_text, cur_tags]
+
+    return posts
+
+def getCurPost():
+    posts = getPosts()
+    now = str(datetime.date.today()).split('-')
+    now = [now[1], now[2], now[0]]
+    if now[0][0] == '0':
+        now[0] = now[0][1:]
+    if now[1][0] == '0':
+        now[1] = now[1][1:]
+    if now[2][0:2] == '20':
+        now[2] = now[2][2:]
+    now = '/'.join(now)
+    now = '10/16/20'
+    if now in posts.keys():
+        f = open('post_text.txt', 'w')
+        f.write(posts[now][0])
+        f.close()
+
+        f = open('post_tags.txt', 'w')
+        f.write(posts[now][1])
+        f.close()
+        return posts[now]
+
+getCurPost()

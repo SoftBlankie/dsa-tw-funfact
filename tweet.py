@@ -3,12 +3,15 @@ from config import create_api
 
 tw = create_api()
 
-# create tweet by matching current date with dict date
+post_text = open("./utility/post_text.txt", "r") 
+post_tags = open("./utility/post_tags.txt", "r") 
 
-# place status in tweet
-# tweet = tw.update_status('')
-# place tags in comment
-# tweetId = tweet.id_str
-# tw.update_status(status = '', in_reply_to_status_id = tweetId, auto_populate_reply_metadata=True)
+if post_text and post_tags:
+    text = post_text.read()
+    tags = post_tags.read()
+    # place status in tweet
+    tweet = tw.update_status(text)
 
-#tw.update_status("Hello World!")
+    # place tags in comment
+    tweetId = tweet.id_str
+    tw.update_status(status = tags, in_reply_to_status_id = tweetId, auto_populate_reply_metadata=True)
